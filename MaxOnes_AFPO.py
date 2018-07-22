@@ -113,17 +113,16 @@ class AFPO():
                 challenger = self.children[j]
 
                 # If challenger is fitter, candidate must be younger
+                # Individuals are only dominated if the challenger has
+                # (1) greater fitness and lower age;
+                # and (2) greater fitness and same age
+                # If challenger has lower age AND lower fitness, the candidate
+                # is non-dominated.
                 if challenger['fitness'] > candidate['fitness']:
                     if not candidate['age'] < challenger['age']:
                         dominated = True
                         break
 
-                # If challenger is younger, candidate must be fitter
-                elif challenger['age'] < candidate['age']:
-                    if not candidate['fitness'] > challenger['fitness']:
-                        dominated = True
-                        break
- 
                 # If identical, take the individual more recently generated (phenotype maps)
                 elif challenger['age'] == candidate['age'] and candidate['fitness'] == challenger['fitness']:
                     if j > i:
@@ -136,10 +135,14 @@ class AFPO():
                 candidate['age'] += 1
                 self.parents.append(candidate)
 
+        # Print age and fitness for validation
+        #for p in self.parents:
+        #    print(p['age'], p['fitness'])
+
     def Spawn(self):
 
         self.children = list()
-
+        print(len(self.parents))
         # Only need to evaluate (popsize-len(parents)) strings:
         while len(self.children) < (self.popsize - len(self.parents) - 1):
         
