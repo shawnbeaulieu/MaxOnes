@@ -142,7 +142,6 @@ class AFPO():
     def Spawn(self):
 
         self.children = list()
-        print(len(self.parents))
         # Only need to evaluate (popsize-len(parents)) strings:
         while len(self.children) < (self.popsize - len(self.parents) - 1):
         
