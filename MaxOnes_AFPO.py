@@ -7,24 +7,21 @@ import copy
 import math
 import random
 
-def Initialize_Population(size, length):
-
+def Save_Data(content):
     """
-    Creates a list of size "size" of individuals with genomes
-    of length "length".
+    Store data for later use.
+     
+    """    
 
-    """
-
-    pop = []
-
-    for p in range(size):
-        child = dict()
-        child['genome'] = [random.choice(range(2)) for _ in range(length)]
-        child['fitness'] = 0
-        child['age'] = 0
-        pop.append(child)
-
-    return(pop)
+    keys = sorted(content.keys())
+    with open("AFPO_History.csv", "a+") as f:
+        # AGE, FITNESS, ID, ORIGIN
+        #  .      .      .     .
+        #  .      .      .     .
+        #  .      .      .     .
+        L = ",".join([str(content[key]) for key in keys if key != 'genome'])
+        f.write(L)
+        f.write("\n")
 
 class AFPO():
 
@@ -46,9 +43,38 @@ class AFPO():
         # *: non-keyworded dynamic update
         # **: key-worded dynamic update
         self.__dict__.update(AFPO.P, **parameters)
-
-        self.children = Initialize_Population(self.popsize, self.max_gene_len)
+        self.current_gen = 0
+        self.idx = 0
+        self.children = self.Initialize_Population(self.popsize, self.max_gene_len)
         self.Evolve()
+
+    def Initialize_Population(self, size, length):
+  
+        """
+        Creates a list of size "size" of individuals with genomes
+        of length "length".
+
+        """
+
+        pop = []
+
+        for p in range(size):
+
+            child = {
+
+                'genome': [random.choice(range(2)) for _ in range(length)],
+                'fitness': 0,
+                'age': 0,
+                'origin': self.current_gen,
+                'id': self.idx
+
+            }
+
+            pop.append(child)
+            self.idx += 1
+ 
+        return(pop)
+
     
     def Evolve(self):
 
@@ -68,20 +94,21 @@ class AFPO():
         """
 
         self.parents = list()
-        self.current_gen = 0
         for g in range(self.max_generations):
             for child in self.children:
                 child['fitness'] = self.Evaluate(child)
+                # Write information to file:
+                Save_Data(child)                
 
             self.Selection()
+            
             # Report current champion fitness:
             champ = self.champion['fitness']
             print("Generation {0}/{1}: Champion={2}".format(self.current_gen, self.max_generations, champ))
+           
+            self.current_gen += 1
             # Spawn a new population of individuals
             self.Spawn()
- 
-            # Increment sel
-            self.current_gen += 1
             
     def Evaluate(self, child):
 
@@ -155,7 +182,6 @@ class AFPO():
         for i in range(len(self.children)):
 
             candidate = self.children[i]
-
             # Find evidence to reverse prior:
             dominated = False
 
@@ -181,7 +207,7 @@ class AFPO():
 
                 # If identical, take the individual more recently generated (phenotype maps)
                 elif (challenger['age'] == candidate['age']) and (candidate['fitness'] == challenger['fitness']):
-                    if j > i:
+                    if j < i:
                         dominated = True
                         break
 
@@ -212,14 +238,14 @@ class AFPO():
             self.children.append(new_child)
 
         # Add baby
-        self.children += Initialize_Population(1, self.max_gene_len)
+        self.children += self.Initialize_Population(1, self.max_gene_len)
 
     def Mutate(self, child):
    
-       """
-       Bit-flipper
+        """
+        Bit-flipper
 
-       """
+        """
         # S:ingle N:ucleotide P:olymorphism
         # Single gene mutation (bit flip)
         SNP = random.choice(range(self.max_gene_len))

@@ -12,7 +12,7 @@ if __name__ == '__main__':
         'popsize': 100,
         'max_gene_len': 500,
         'target': [1]*500,
-        'max_generations': 500
+        'max_generations': 1000
 
     }
 

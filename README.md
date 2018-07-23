@@ -19,3 +19,5 @@ of possible phenotypic pathways to selection (Wagner, 2011).
 
 Parameters like population size and length of genetic strings are modifiable 
 in the "Run" file.
+
+![Alt text](/home/vesalius/Pictures/MaxOnes_Rainbow.png?raw=true "Rainbow Waterfall")
