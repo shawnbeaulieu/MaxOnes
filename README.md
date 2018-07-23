@@ -15,7 +15,7 @@ Descendants inherit the age of their parent.
 
 In the event of a tie (same fitness; same age) the individual who was spawned 
 most recently is preserved. The reason for this is to expose a greater number
-of possible phenotypic pathways to selection (Wagner, 2011).
+of possible phenotypic pathways to selection ([Wagner, 2011](https://www.ncbi.nlm.nih.gov/pubmed/21872964)).
 
 Parameters like population size and length of genetic strings are modifiable 
 in the "Run" file.
