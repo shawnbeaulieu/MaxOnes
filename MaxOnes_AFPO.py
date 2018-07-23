@@ -49,7 +49,6 @@ class AFPO():
         self.parents = list()
         self.current_gen = 0
         for g in range(self.max_generations):
-
             for child in self.children:
                 child['fitness'] = self.Evaluate(child)
 
@@ -79,7 +78,13 @@ class AFPO():
         else:
 
             self.Age_Fitness_Selection()
+            self.Mature()
             self.Find_Champion(seed=self.champion['fitness'])        
+
+    def Mature(self):
+
+        for parent in self.parents:
+            parent['age'] += 1
 
     def Find_Champion(self, seed):
 
@@ -92,7 +97,7 @@ class AFPO():
     def Age_Fitness_Selection(self):
 
         # Held out (non-dominated) parents during evaluation
-        self.children = self.children + self.parents
+        self.children = self.parents + self.children
         self.parents = list()
  
         for i in range(len(self.children)):
@@ -109,7 +114,6 @@ class AFPO():
             competitors = other[:i] + other[i+1:]
 
             for j in competitors:
-               
                 challenger = self.children[j]
 
                 # If challenger is fitter, candidate must be younger
@@ -121,18 +125,15 @@ class AFPO():
                 if challenger['fitness'] > candidate['fitness']:
                     if not candidate['age'] < challenger['age']:
                         dominated = True
-                        break
+                        #break
 
                 # If identical, take the individual more recently generated (phenotype maps)
-                elif challenger['age'] == candidate['age'] and candidate['fitness'] == challenger['fitness']:
+                elif (challenger['age'] == candidate['age']) and (candidate['fitness'] == challenger['fitness']):
                     if j > i:
                         dominated = True
-                        break
 
             # If individual survives tests above, they survive (non-dominated)
             if not dominated:
-                # Increment age and append
-                candidate['age'] += 1
                 self.parents.append(candidate)
 
         # Print age and fitness for validation
