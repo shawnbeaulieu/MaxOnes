@@ -20,4 +20,13 @@ of possible phenotypic pathways to selection (Wagner, 2011).
 Parameters like population size and length of genetic strings are modifiable 
 in the "Run" file.
 
+Below is an example fitness plot for AFPO where the length of the target bitstring=500.
+The population size was set to 100, and the algorithm was terminated after 1000 generations.
+Normally, we'd expect to see more usurpations by younger cohorts, but given the nature of
+the problem, innovations are necessarily minor. A single bit-flip won't result in a 
+significant change in fitness. For smaller target strings, there's greater turnover.
+However, the convergence also happens much faster, so this behavior isn't as apparent
+as in Cheney, et.al 2018.
+
 ![Alt text](MaxOnes_Rainbow.png)
+
