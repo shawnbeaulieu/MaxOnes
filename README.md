@@ -24,7 +24,7 @@ Below is an example fitness plot for AFPO where the length of the target bitstri
 The population size was set to 100, and the algorithm was terminated after 1000 generations.
 Normally, we'd expect to see more usurpations by younger cohorts, but given the nature of
 the problem, innovations are necessarily minor. A single bit-flip won't result in a 
-significant change in fitness. For smaller target strings, there's greater turnover.
+significant change in fitness. For smaller target strings, there is much greater turnover.
 However, the convergence also happens much faster, so this behavior isn't as apparent
 as in [Cheney et.al 2018](http://www.ncheney.com/pubs/pdf/2018_CheneyBongardSunSpiralLipson_ScalableCoOptimizationOfMorphologyAndControlInEmbodiedMachines_RoyalSocietyInterface.pdf).
 
