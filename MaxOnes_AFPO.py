@@ -9,6 +9,12 @@ import random
 
 def Initialize_Population(size, length):
 
+    """
+    Creates a list of size "size" of individuals with genomes
+    of length "length".
+
+    """
+
     pop = []
 
     for p in range(size):
@@ -46,6 +52,21 @@ class AFPO():
     
     def Evolve(self):
 
+        """
+        This function loops through the number of generations, calling 
+        other functions that dictate evolution. Champions are printed at
+        the end of every generation.
+
+        Logic flow: 
+
+            (1) Initialize parents
+            (2) Evaluate children
+            (3) Filter by AFPO
+            (4) Obtain new parents
+            (5) Spawn new children based on (4)
+
+        """
+
         self.parents = list()
         self.current_gen = 0
         for g in range(self.max_generations):
@@ -64,15 +85,29 @@ class AFPO():
             
     def Evaluate(self, child):
 
+        """
+        Finds the ratio of correct to incorrect entries
+
+        """
+
         score = sum([int(child['genome'][x] == self.target[x]) for x in range(self.max_gene_len)])
         return(float(score)/len(child['genome']))
 
     def Selection(self):
 
+        """
+        Filtration.
+
+        If the current generation == 0, then just take the fittest individual to be
+        the sole parent for the next generation. Otherwise, call AFPO.
+
+        """
+
         if self.current_gen == 0:
    
             # For first generation, just take the fittest individual
             self.Find_Champion(seed=0.0)
+            self.Mature()
             self.parents.append(self.champion)
 
         else:
@@ -82,11 +117,21 @@ class AFPO():
             self.Find_Champion(seed=self.champion['fitness'])        
 
     def Mature(self):
+   
+        """
+        Increments the age of the surviving parents.
+
+        """
 
         for parent in self.parents:
             parent['age'] += 1
 
     def Find_Champion(self, seed):
+
+        """
+        Locates the current champion
+
+        """
 
         max_score = seed
         for child in self.children:
@@ -95,6 +140,13 @@ class AFPO():
                 self.champion = child
 
     def Age_Fitness_Selection(self):
+
+        """
+        Looks for domination by age and fitness. If an individual is non-dominated
+        (i.e. no other individual is both younger and fitter) then it survives into
+        the next generation and gives birth to offspring.
+
+        """
 
         # Held out (non-dominated) parents during evaluation
         self.children = self.parents + self.children
@@ -125,12 +177,13 @@ class AFPO():
                 if challenger['fitness'] > candidate['fitness']:
                     if not candidate['age'] < challenger['age']:
                         dominated = True
-                        #break
+                        break
 
                 # If identical, take the individual more recently generated (phenotype maps)
                 elif (challenger['age'] == candidate['age']) and (candidate['fitness'] == challenger['fitness']):
                     if j > i:
                         dominated = True
+                        break
 
             # If individual survives tests above, they survive (non-dominated)
             if not dominated:
@@ -142,6 +195,12 @@ class AFPO():
 
     def Spawn(self):
 
+        """
+        Fills out the rest of the population with mutated versions of the non-dominated 
+        parents. One slot is saved for a "baby" individual, with age 0 and randomized genome.
+
+        """
+
         self.children = list()
         # Only need to evaluate (popsize-len(parents)) strings:
         while len(self.children) < (self.popsize - len(self.parents) - 1):
@@ -152,10 +211,15 @@ class AFPO():
             new_child = self.Mutate(copy.deepcopy(progenitor))
             self.children.append(new_child)
 
+        # Add baby
         self.children += Initialize_Population(1, self.max_gene_len)
 
     def Mutate(self, child):
    
+       """
+       Bit-flipper
+
+       """
         # S:ingle N:ucleotide P:olymorphism
         # Single gene mutation (bit flip)
         SNP = random.choice(range(self.max_gene_len))
