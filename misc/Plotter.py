@@ -16,7 +16,7 @@ def Plotter():
     
     print("Loading Data...")
 
-    data = pd.read_csv("AFPO_History.csv", header=None)
+    data = pd.read_csv("../AFPO_History.csv", header=None)
     max_id = np.max(data.iloc[:,2])
     colors = {i:np.random.random(3) for i in range(max_id+1)}
 

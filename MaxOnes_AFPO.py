@@ -3,7 +3,6 @@
 # Author: Shawn Beaulieu
 # July 20th, 2018
 
-import copy
 import math
 import random
 
@@ -22,6 +21,33 @@ def Save_Data(content):
         L = ",".join([str(content[key]) for key in keys if key != 'genome'])
         f.write(L)
         f.write("\n")
+
+
+def Deep_Copy(content):
+
+    """
+    If content is a regular variable, return that variable.
+    Otherwise, construct a list and append values from the
+    original to it. 
+
+    """
+
+
+    if isinstance(content, list):
+
+        ret = []
+
+        for i in content:
+            ret.append(i)
+
+    elif isinstance(content, (int, float, type(None), str, bool)):
+
+        ret = content
+
+    else:
+        raise ValueError("Unexpected type for Deep_Copy function")
+
+    return(ret)
 
 class AFPO():
 
@@ -232,10 +258,14 @@ class AFPO():
         while len(self.children) < (self.popsize - len(self.parents) - 1):
         
             # Randomly select a parent to copy and mutate
+            new_child = dict()
             progenitor = self.parents[random.choice(range(len(self.parents)))]
+
             # Add mutated parent to new child population:
-            new_child = self.Mutate(copy.deepcopy(progenitor))
-            self.children.append(new_child)
+            for key in progenitor.keys():
+                new_child[key] = Deep_Copy(progenitor[key])
+
+            self.children.append(self.Mutate(new_child))
 
         # Add baby
         self.children += self.Initialize_Population(1, self.max_gene_len)
